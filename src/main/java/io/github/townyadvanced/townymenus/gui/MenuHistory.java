@@ -13,13 +13,25 @@ import java.util.function.Supplier;
 
 /**
  * Used for tracking what menus a player has opened in their current 'session'.
+ * <p>
+ * History is read and modified from both async menu building tasks and the main thread,
+ * so every access to a player's history list is synchronized on that list.
  */
 public class MenuHistory {
     private static final Map<UUID, List<MenuInventory>> historyMap = new ConcurrentHashMap<>();
 
+    /**
+     * @return A snapshot copy of the player's history, or {@code null} if they have none.
+     */
     @Nullable
     public static List<MenuInventory> getHistory(UUID uuid) {
-        return historyMap.get(uuid);
+        final List<MenuInventory> history = historyMap.get(uuid);
+        if (history == null)
+            return null;
+
+        synchronized (history) {
+            return new ArrayList<>(history);
+        }
     }
 
     public static void clearHistory(UUID uuid) {
@@ -27,7 +39,11 @@ public class MenuHistory {
     }
 
     public static void addHistory(UUID uuid, MenuInventory menuInventory) {
-        historyMap.computeIfAbsent(uuid, k -> new ArrayList<>()).add(menuInventory);
+        final List<MenuInventory> history = historyMap.computeIfAbsent(uuid, k -> new ArrayList<>());
+
+        synchronized (history) {
+            history.add(menuInventory);
+        }
     }
 
     /**
@@ -35,17 +51,23 @@ public class MenuHistory {
      * @param player The player to open the previous menu for.
      */
     public static void back(Player player) {
-        List<MenuInventory> history = historyMap.get(player.getUniqueId());
-
-        // Player has no history or not enough history
-        if (history == null || history.size() < 2)
+        final List<MenuInventory> history = historyMap.get(player.getUniqueId());
+        if (history == null)
             return;
 
-        // Remove the current inventory from history
-        history.remove(history.size() - 1);
+        final MenuInventory previous;
+        synchronized (history) {
+            // Player does not have enough history
+            if (history.size() < 2)
+                return;
+
+            // Remove the current inventory from history
+            history.removeLast();
+            previous = history.getLast();
+        }
 
         // Open the last inventory without adding to history.
-        history.get(history.size() - 1).openSilent(player);
+        previous.openSilent(player);
     }
 
     /**
@@ -53,21 +75,30 @@ public class MenuHistory {
      * @param player The player to open the last menu for.
      */
     public static void last(Player player) {
-        List<MenuInventory> history = historyMap.get(player.getUniqueId());
-
-        if (history == null || history.isEmpty())
+        final List<MenuInventory> history = historyMap.get(player.getUniqueId());
+        if (history == null)
             return;
 
-        history.get(history.size() - 1).openSilent(player);
+        final MenuInventory last;
+        synchronized (history) {
+            if (history.isEmpty())
+                return;
+
+            last = history.getLast();
+        }
+
+        last.openSilent(player);
     }
 
     public static void pop(UUID uuid) {
-        List<MenuInventory> history = historyMap.get(uuid);
-
-        if (history == null || history.isEmpty())
+        final List<MenuInventory> history = historyMap.get(uuid);
+        if (history == null)
             return;
 
-        history.remove(history.size() - 1);
+        synchronized (history) {
+            if (!history.isEmpty())
+                history.removeLast();
+        }
     }
 
     public static void reOpen(Player player, Supplier<MenuInventory> supplier) {

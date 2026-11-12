@@ -17,7 +17,7 @@ public class Localization {
 
     @NotNull
     public static Optional<Locale> parseLocale(@Nullable Player player) {
-        return player != null ? parseLocale(player.getLocale()) : Optional.empty();
+        return player != null ? Optional.of(player.locale()) : Optional.empty();
     }
 
     @NotNull

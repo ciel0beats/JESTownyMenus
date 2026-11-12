@@ -31,6 +31,15 @@ public class AnvilInputBackend implements UserInputBackend {
 
 	@Override
 	public void startAwaitingInput(final Player player, final MenuInventory currentInventory, final Component title, final Function<PlayerInput, List<InputResponse>> inputFunction) {
+		try {
+			openAnvil(player, currentInventory, title, inputFunction);
+		} catch (Throwable throwable) {
+			plugin.getSLF4JLogger().warn("Anvil input failed on this server version ({}), switching to chat input.", plugin.getServer().getMinecraftVersion(), throwable);
+			plugin.fallbackToTextInput().startAwaitingInput(player, currentInventory, title, inputFunction);
+		}
+	}
+
+	private void openAnvil(final Player player, final MenuInventory currentInventory, final Component title, final Function<PlayerInput, List<InputResponse>> inputFunction) {
 		new AnvilGUI.Builder()
 			.jsonTitle(GsonComponentSerializer.gson().serialize(title))
 			.onClose(snapshot -> plugin.getScheduler().run(snapshot.getPlayer(), () -> currentInventory.openSilent(snapshot.getPlayer()))) // Re-open previous inventory if closed

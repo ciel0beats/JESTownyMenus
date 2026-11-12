@@ -31,7 +31,13 @@ public class InventoryListener implements Listener {
 
         event.setCancelled(true);
 
-        List<ClickAction> actions = menu.actions(event.getSlot());
+        // Only clicks inside the menu itself should trigger actions, not clicks in the player's own inventory.
+        // Raw slots below the menu size belong to the menu, anything else is the player's inventory or outside the window.
+        final int rawSlot = event.getRawSlot();
+        if (rawSlot < 0 || rawSlot >= menu.size())
+            return;
+
+        List<ClickAction> actions = menu.actions(rawSlot);
         if (actions != null)
             actions.forEach(action -> action.onClick(menu, event));
     }

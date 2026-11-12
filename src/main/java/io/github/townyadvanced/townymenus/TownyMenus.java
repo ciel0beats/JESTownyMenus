@@ -14,6 +14,7 @@ import io.github.townyadvanced.townymenus.commands.TownyMenuCommand;
 import io.github.townyadvanced.townymenus.commands.MenuExtensionCommand;
 import io.github.townyadvanced.townymenus.gui.MenuInventory;
 import io.github.townyadvanced.townymenus.gui.input.UserInputBackend;
+import io.github.townyadvanced.townymenus.gui.input.impl.text.TextInputBackend;
 import io.github.townyadvanced.townymenus.listeners.AwaitingConfirmation;
 import io.github.townyadvanced.townymenus.listeners.InventoryListener;
 import io.github.townyadvanced.townymenus.listeners.PlayerListener;
@@ -34,7 +35,7 @@ public class TownyMenus extends JavaPlugin implements Listener {
 	private static final Version requiredTownyVersion = Version.fromString("0.101.2.5");
 	private static TownyMenus plugin;
 	private final TaskScheduler scheduler;
-	private UserInputBackend userInputBackend;
+	private volatile UserInputBackend userInputBackend;
 
 	public TownyMenus() {
 		plugin = this;
@@ -81,6 +82,7 @@ public class TownyMenus extends JavaPlugin implements Listener {
 			if (player.getOpenInventory().getTopInventory().getHolder(false) instanceof MenuInventory)
 				player.closeInventory();
 
+		TownyCommandAddonAPI.removeSubCommand(CommandType.TOWNY, "menu");
 		TownyCommandAddonAPI.removeSubCommand(CommandType.NATION, "menu");
 		TownyCommandAddonAPI.removeSubCommand(CommandType.PLOT, "menu");
 		TownyCommandAddonAPI.removeSubCommand(CommandType.RESIDENT, "menu");
@@ -96,7 +98,7 @@ public class TownyMenus extends JavaPlugin implements Listener {
 	}
 
 	public String getVersion() {
-		return this.getDescription().getVersion();
+		return this.getPluginMeta().getVersion();
 	}
 
 	private boolean townyVersionCheck() {
@@ -109,6 +111,23 @@ public class TownyMenus extends JavaPlugin implements Listener {
 
 	public UserInputBackend getUserInputBackend() {
 		return this.userInputBackend;
+	}
+
+	/**
+	 * Permanently switches to chat based input. Used when the anvil backend fails at runtime,
+	 * for example when the server's internals don't match what AnvilGUI expects.
+	 *
+	 * @return The chat input backend now in use.
+	 */
+	public synchronized UserInputBackend fallbackToTextInput() {
+		if (this.userInputBackend instanceof TextInputBackend textBackend)
+			return textBackend;
+
+		final TextInputBackend textBackend = new TextInputBackend(this);
+		getServer().getPluginManager().registerEvents(textBackend, this);
+		this.userInputBackend = textBackend;
+
+		return textBackend;
 	}
 
 	private static boolean isFoliaClassPresent() {

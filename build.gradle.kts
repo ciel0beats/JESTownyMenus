@@ -26,7 +26,10 @@ dependencies {
     implementation(libs.anvilgui)
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_21
+java {
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+}
 
 tasks {
     assemble {
@@ -45,8 +48,7 @@ tasks {
 
     compileJava {
         options.encoding = Charsets.UTF_8.name()
-        options.release.set(21)
-    }
+        options.release.set(25)    }
 
     processResources {
         filteringCharset = Charsets.UTF_8.name()
@@ -55,7 +57,7 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("26.1.2")
+        minecraftVersion("26.2")
 
         downloadPlugins {
 			libs.versions.towny.map { github("TownyAdvanced", "Towny", it, "towny-${it}.jar") }
@@ -71,7 +73,7 @@ tasks {
 
 		options.use()
 		options.links(
-			"https://jd.papermc.io/paper/${libs.versions.paper.get().substringBefore("-")}/",
+			"https://jd.papermc.io/paper/${libs.versions.paper.get().substringBefore(".build")}/",
 			"https://townyadvanced.github.io/Towny/javadoc/release/"
 		)
 	}
@@ -100,7 +102,7 @@ publishMods {
 
 	github {
 		accessToken.set(System.getenv("TOWNYMENUS_GITHUB_PAT"))
-		repository.set("TownyAdvanced/TownyMenus")
+		repository.set("ciel0beats/JESTownyMenus")
 		commitish.set("main")
 		tagName.set(project.version as String)
 		displayName.set("Version " + tagName.get())

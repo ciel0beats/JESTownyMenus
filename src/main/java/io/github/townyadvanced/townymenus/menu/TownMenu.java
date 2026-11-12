@@ -303,7 +303,7 @@ public class TownMenu {
                                 return Arrays.asList(of("msg-click-to").append(of("town-menu-management-resident-title-title-subtitle")).component(locale),
                                         of("msg-right-click-to").append(of("town-menu-management-resident-title-clear")).component(locale));
                         })
-                        .action(!player.hasPermission(PermissionNodes.TOWNY_COMMAND_TOWN_SET_TITLE.getNode()) ? ClickAction.NONE : ClickAction.leftClick(ClickAction.userInput(of("town-menu-management-resident-enter-new-title").toString(), completion -> {
+                        .action(!player.hasPermission(PermissionNodes.TOWNY_COMMAND_TOWN_SET_TITLE.getNode()) ? ClickAction.NONE : ClickAction.leftClick(ClickAction.userInput(of("town-menu-management-resident-enter-new-title").forLocale(player), completion -> {
                             try {
                                 BaseCommand.checkPermOrThrow(player, PermissionNodes.TOWNY_COMMAND_TOWN_SET_TITLE.getNode());
                                 TownCommand.townSetTitle(player, new String[]{ resident.getName(), completion.getText() }, false);
@@ -332,7 +332,7 @@ public class TownMenu {
                                 return Arrays.asList(of("msg-click-to").append(of("town-menu-management-resident-surname-subtitle")).component(locale),
                                         of("msg-right-click-to").append(of("town-menu-management-resident-surname-clear")).component(locale));
                         })
-                        .action(!player.hasPermission(PermissionNodes.TOWNY_COMMAND_TOWN_SET_SURNAME.getNode()) ? ClickAction.NONE : ClickAction.leftClick(ClickAction.userInput(of("town-menu-management-resident-enter-new-surname").toString(), completion -> {
+                        .action(!player.hasPermission(PermissionNodes.TOWNY_COMMAND_TOWN_SET_SURNAME.getNode()) ? ClickAction.NONE : ClickAction.leftClick(ClickAction.userInput(of("town-menu-management-resident-enter-new-surname").forLocale(player), completion -> {
                             try {
                                 BaseCommand.checkPermOrThrow(player, PermissionNodes.TOWNY_COMMAND_TOWN_SET_SURNAME.getNode());
                                 TownCommand.townSetSurname(player, new String[]{ resident.getName(), completion.getText() }, false);
@@ -575,7 +575,7 @@ public class TownMenu {
                                 return Arrays.asList(of("msg-click-to").append(of("town-menu-town-set-change-board-subtitle")).component(locale).color(GRAY),
                                         of("msg-right-click-to").append(of("town-menu-town-set-change-board-subtitle")).component(locale).color(GRAY));
                         })
-                        .action(town == null || !player.hasPermission(PermissionNodes.TOWNY_COMMAND_TOWN_SET_BOARD.getNode()) ? ClickAction.NONE : ClickAction.leftClick(ClickAction.userInput(of("town-menu-town-set-enter-town-board").toString(), completion -> {
+                        .action(town == null || !player.hasPermission(PermissionNodes.TOWNY_COMMAND_TOWN_SET_BOARD.getNode()) ? ClickAction.NONE : ClickAction.leftClick(ClickAction.userInput(of("town-menu-town-set-enter-town-board").forLocale(player), completion -> {
                             final Town playerTown = TownyAPI.getInstance().getTown(player);
                             if (playerTown == null || !player.hasPermission(PermissionNodes.TOWNY_COMMAND_TOWN_SET_BOARD.getNode()))
                                 return InputResponse.finish();

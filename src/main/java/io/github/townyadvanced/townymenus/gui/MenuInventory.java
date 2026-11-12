@@ -5,7 +5,6 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import com.palmergames.bukkit.towny.scheduling.TaskScheduler;
 import io.github.townyadvanced.townymenus.TownyMenus;
 import io.github.townyadvanced.townymenus.gui.action.ClickAction;
@@ -36,7 +35,7 @@ public class MenuInventory implements InventoryHolder, Iterable<ItemStack>, Supp
     private final Map<Integer, List<ClickAction>> clickActions = new HashMap<>();
 
     public MenuInventory(@NotNull Inventory inventory, @NotNull Component title) {
-        this.inventory = Bukkit.createInventory(this, inventory.getSize(), PlainTextComponentSerializer.plainText().serialize(title));
+        this.inventory = Bukkit.createInventory(this, inventory.getSize(), title);
         this.inventory.setContents(inventory.getContents());
         this.size = this.inventory.getSize();
     }
@@ -148,7 +147,7 @@ public class MenuInventory implements InventoryHolder, Iterable<ItemStack>, Supp
         }
 
         public MenuInventory build() {
-            Inventory inventory = Bukkit.createInventory(null, size, PlainTextComponentSerializer.plainText().serialize(title));
+            Inventory inventory = Bukkit.createInventory(null, size, title);
 
             Map<Integer, List<ClickAction>> actions = new HashMap<>();
 

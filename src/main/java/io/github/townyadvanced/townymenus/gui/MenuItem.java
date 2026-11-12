@@ -9,8 +9,6 @@ import io.github.townyadvanced.townymenus.gui.slot.anchor.SlotAnchor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -75,7 +73,7 @@ public class MenuItem {
 
         final ItemMeta meta = itemStack.getItemMeta();
         if (meta != null) {
-            builder.withGlint(meta.hasEnchants());
+            builder.withGlint(meta.hasEnchants() || (meta.hasEnchantmentGlintOverride() && meta.getEnchantmentGlintOverride()));
 
 			final Component displayName = meta.displayName();
             if (displayName != null) {
@@ -194,10 +192,8 @@ public class MenuItem {
                 if (meta instanceof SkullMeta skullMeta && this.ownerUUID != null)
                     skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(this.ownerUUID));
 
-                if (glint) {
-                    meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                    meta.addEnchant(Enchantment.VANISHING_CURSE, 1, true);
-                }
+                if (glint)
+                    meta.setEnchantmentGlintOverride(true);
 
                 itemStack.setItemMeta(meta);
             }

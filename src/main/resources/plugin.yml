@@ -1,7 +1,7 @@
 name: TownyMenus
 main: io.github.townyadvanced.townymenus.TownyMenus
 version: ${version}
-api-version: 1.20
+api-version: '26.2'
 author: Warriorrr
 website: 'https://townyadvanced.github.io'
 folia-supported: true

@@ -73,3 +73,13 @@
   - Fixed an issue where English translations registered by other plugins were being overwritten when the Towny config is reloaded.
 0.0.16:
   - Actually update AnvilGUI again to fix an issue on 26.1.2 servers.
+0.0.17:
+  - Updated for Minecraft 26.2 (Paper 26.2, Java 25) and Towny 0.103.2.15.
+  - Anvil input now falls back to chat input automatically if it fails on the running server version.
+  - Fixed clicking items in your own inventory triggering the menu button in the same slot.
+  - Fixed chat input running Towny commands off the main thread.
+  - Chat input cancel words (q, quit, cancel, stop) are no longer case sensitive.
+  - Fixed some input prompt titles not using the player's language.
+  - Fixed the /towny menu subcommand not being unregistered when the plugin is disabled.
+  - Menu titles now keep their colors and formatting.
+  - Fixed rare errors when menu history was changed from multiple threads at once.

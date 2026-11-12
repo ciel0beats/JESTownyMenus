@@ -1,4 +1,4 @@
-[Github](https://github.com/TownyAdvanced/TownyMenus) | [Discord](https://discord.gg/gnpVs5m)
+[Github](https://github.com/ciel0beats/JESTownyMenus) | [Discord](https://discord.gg/gnpVs5m)
 
 <!-- modrinth_exclude.start -->
 [![Build Status](https://ci.warriorrr.dev/job/TownyMenus/badge/icon)](https://ci.warriorrr.dev/job/TownyMenus/)
@@ -8,8 +8,8 @@
 An easy-to-use and accessible way for players to use Towny commands.
 
 ## Requirements
-- [Towny](https://github.com/TownyAdvanced/Towny) version 0.101.2.5 or newer.
-- Paper 1.20.1 or newer.
+- [Towny](https://github.com/TownyAdvanced/Towny) version 0.101.2.5 or newer (tested with 0.103.2.15).
+- Paper 26.2 or newer.
 
 ## About
 TownyMenus is a plugin that adds lots of inventory menus that trivializes interfacing with Towny. Instead of having to scour through documentation, commands are just a mouseclick away.
@@ -18,10 +18,10 @@ Players can open the main menu using /townymenu or one of its aliases. The menu 
 
 <!-- modrinth_exclude.start -->
 ## Downloading
-The plugin can be downloaded from [Hangar](https://hangar.papermc.io/Warrior/TownyMenus), [Modrinth](https://modrinth.com/plugin/townymenus) or from the [latest release](https://github.com/TownyAdvanced/TownyMenus/releases).
+The plugin can be downloaded from [Hangar](https://hangar.papermc.io/Warrior/TownyMenus), [Modrinth](https://modrinth.com/plugin/townymenus) or from the [latest release](https://github.com/ciel0beats/JESTownyMenus/releases).
 
 Development builds can be downloaded [here](https://ci.warriorrr.dev/job/TownyMenus/).
 
 ## Compiling from source
-Build with `gradlew build` (Windows) or `./gradlew build` (Linux), requires Java 21.
+Build with `gradlew build` (Windows) or `./gradlew build` (Linux), requires Java 25.
 <!-- modrinth_exclude.end -->

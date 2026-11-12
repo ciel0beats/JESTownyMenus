@@ -23,6 +23,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -49,7 +50,8 @@ public class TextInputBackend implements UserInputBackend, Listener {
 		cancelSession(uuid);
 		sessions.put(uuid, session);
 
-		player.closeInventory();
+		// This is usually called from an inventory click event, where closing the inventory directly is unsafe.
+		player.getScheduler().run(plugin, task -> player.closeInventory(), null);
 
 		player.sendRichMessage(Translatable.of("townymenus:plugin-prefix").append(Translatable.of("chat-input-header")).forLocale(player));
 		player.sendMessage(title);
@@ -75,14 +77,23 @@ public class TextInputBackend implements UserInputBackend, Listener {
 
 		event.setCancelled(true);
 
-		final String plain = PlainTextComponentSerializer.plainText().serialize(event.originalMessage());
-		if (CANCEL_PHRASES.contains(plain)) {
+		final String plain = PlainTextComponentSerializer.plainText().serialize(event.originalMessage()).trim();
+		if (CANCEL_PHRASES.contains(plain.toLowerCase(Locale.ROOT))) {
 			cancelSession(player.getUniqueId());
 			player.sendRichMessage(Translatable.of("townymenus:plugin-prefix").append(Translatable.of("chat-input-cancelled")).forLocale(player));
 			return;
 		}
 
-		final List<InputResponse> responses = session.inputFunction().apply(new PlayerInput(plain));
+		// Chat is handled off the main thread, Towny commands and events have to run on the player's thread.
+		player.getScheduler().run(plugin, task -> handleInput(player, session, plain), null);
+	}
+
+	private void handleInput(final Player player, final TextInputSession session, final String input) {
+		// The session may have been cancelled or replaced while this task was waiting to run.
+		if (sessions.get(player.getUniqueId()) != session)
+			return;
+
+		final List<InputResponse> responses = session.inputFunction().apply(new PlayerInput(input));
 
 		for (final InputResponse response : responses) {
 			switch (response) {
